@@ -11,10 +11,16 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import sys
+import datetime
+import dj_database_url
+
+# Path helper
+location = lambda x: os.path.join(
+    os.path.dirname(os.path.realpath(__file__)), x)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -25,8 +31,34 @@ SECRET_KEY = 'nwnwcvplht=$il*2mn0qwt4g4z%%1g=x42tc)6y$)-@y0n2n_$'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '10.99.3.59']
 
+
+def is_run_in_test_env():
+    if len(sys.argv) > 1 and sys.argv[1] == 'test':
+        return True
+    return False
+
+
+def is_run_in_prod_env():
+    if 'DJANGO_ENV' in os.environ:  # get debug from environ heroku
+        if os.environ.get('DJANGO_ENV') == 'production':
+            return True
+    return False
+
+
+IS_RUN_IN_TEST_ENV = is_run_in_test_env()
+IS_RUN_IN_PROD_ENV = is_run_in_prod_env()
+
+# some constant URL
+if IS_RUN_IN_PROD_ENV:
+    DORASEE_BASE_URL = 'cp-kawung.compfest.web.id'
+    DOMAIN_PROTOCOL = 'https://'
+else:
+    DORASEE_BASE_URL = 'localhost:8000'
+    DOMAIN_PROTOCOL = 'http://'
+
+DORASEE_HTTPS_BASE_URL = DOMAIN_PROTOCOL + DORASEE_BASE_URL
 
 # Application definition
 
@@ -37,7 +69,24 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'dorasee',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+}
+
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=21600),
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -69,17 +118,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'dorasee.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
+DEFAULT_DATABASE_URL = os.getenv('DATABASE_URL') if os.getenv('DATABASE_URL') else 'sqlite:///{0}'.format(
+    location('db.sqlite'))
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+    'default': dj_database_url.config(default=DEFAULT_DATABASE_URL),
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -99,6 +145,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# CORS
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_WHITELIST = (
+    'localhost:3000',
+)
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
@@ -113,8 +164,9 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
