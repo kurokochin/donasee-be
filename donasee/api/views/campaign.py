@@ -39,7 +39,7 @@ class DonationList(APIView):
     permission_classes = (AllowAny,)
 
     def post(self, request, form=None):
-        ser = DonationSerializer(request.data)
+        ser = DonationSerializer(data=request.data)
         if ser.is_valid():
             return Response(ser.data)
         return Response({'detail': ser.errors}, status=status.HTTP_400_BAD_REQUEST)
