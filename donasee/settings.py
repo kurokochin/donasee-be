@@ -71,7 +71,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'donasee',
-    'donasee.apps.accounts'
+    'donasee.apps.accounts',
+    'donasee.apps.campaign'
 ]
 
 REST_FRAMEWORK = {
@@ -147,10 +148,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # CORS
-CORS_ALLOW_CREDENTIALS = True
-CORS_ORIGIN_WHITELIST = (
-    'localhost:3000',
-)
+CORS_ORIGIN_ALLOW_ALL = True
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
