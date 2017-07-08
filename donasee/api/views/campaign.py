@@ -28,5 +28,8 @@ class CampaignListView(APIView):
         ser = CampaignSerializer(data=request.data)
         if ser.is_valid():
             ser.save()
-            return Response(ser.data)
+            data = ser.data
+            data['community_name'] = UserProfileSerializer(
+                instance=UserProfile.objects.get(user=User.objects.get(id=ser.data['user']))).data['community_name']
+            return Response(data)
         return Response({'detail': ser.errors['non_field_errors'][0]}, status=status.HTTP_400_BAD_REQUEST)
