@@ -18,3 +18,6 @@ class UserProfile(models.Model):
     status = models.CharField(max_length=8, choices=STATUS_CHOICES, default='pending')
     docs_link = models.URLField()
     error_message = models.CharField(null=True, blank=True, max_length=512)
+
+    def __unicode__(self):
+        return self.user.email + ' ' + self.community_name
