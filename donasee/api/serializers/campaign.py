@@ -23,22 +23,22 @@ class CampaignSerializer(serializers.ModelSerializer):
             user = User.objects.get(id=attrs['user'].id)
             user_profile = UserProfile.objects.get(user=user)
             if user_profile.status == 'pending':
-                return serializers.ValidationError('User Profile hasn\'t been verified')
+                raise serializers.ValidationError('User Profile hasn\'t been verified')
         except User.DoesNotExist:
-            return serializers.ValidationError('User doesn\'t exist')
+            raise serializers.ValidationError('User doesn\'t exist')
         except UserProfile.DoesNotExist:
-            return serializers.ValidationError('User Profile doesn\' exist')
+            raise serializers.ValidationError('User Profile doesn\' exist')
 
         if not attrs['title']:
-            return serializers.ValidationError('Invalid title provided')
+            raise serializers.ValidationError('Invalid title provided')
 
         if not attrs['image']:
-            return serializers.ValidationError('Invalid image link provided')
+            raise serializers.ValidationError('Invalid image link provided')
 
         if not attrs['money_needed']:
-            return serializers.ValidationError('Invalid money needed provided')
+            raise serializers.ValidationError('Invalid money needed provided')
 
         if not attrs['description']:
-            return serializers.ValidationError('Invalid description provided')
+            raise serializers.ValidationError('Invalid description provided')
 
         return attrs
