@@ -19,6 +19,7 @@ class Campaign(models.Model):
 class Donation(models.Model):
     campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE, related_name="donations")
     name = models.CharField(max_length=256)
+    email = models.CharField(max_length=256, blank=True, default='')
     amount = models.IntegerField()
     social_security_number = models.CharField(max_length=128)
 

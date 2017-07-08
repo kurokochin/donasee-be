@@ -4,7 +4,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from donasee.api.serializers.campaign import CampaignSerializer
+from donasee.api.serializers.campaign import CampaignSerializer, DonationSerializer
 from donasee.api.serializers.user import UserProfileSerializer
 from donasee.apps.accounts.models import UserProfile
 from donasee.apps.campaign.models import Campaign
@@ -33,3 +33,13 @@ class CampaignListView(APIView):
                 instance=UserProfile.objects.get(user=User.objects.get(id=ser.data['user']))).data['community_name']
             return Response(data)
         return Response({'detail': ser.errors['non_field_errors'][0]}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DonationList(APIView):
+    permission_classes = (AllowAny,)
+
+    def post(self, request, form=None):
+        ser = DonationSerializer(request.data)
+        if ser.is_valid():
+            return Response(ser.data)
+        return Response({'detail': ser.errors}, status=status.HTTP_400_BAD_REQUEST)
