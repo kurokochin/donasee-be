@@ -1,3 +1,4 @@
+import jwt
 from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.permissions import AllowAny
@@ -6,6 +7,7 @@ from rest_framework.views import APIView
 from rest_framework_jwt.settings import api_settings
 
 from donasee.api.serializers.user import RegisterSerializer, UserSerializer, LoginSerializer
+from donasee.settings import SECRET_KEY
 
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
@@ -154,3 +156,49 @@ class LoginView(APIView):
             }
             return Response(data)
         return Response({'detail': ser.errors['non_field_errors'][0]}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+class LoginJWTView(APIView):
+    """
+        Login JWT
+
+            Allowed Method: POST
+            Headers:
+                - Authorization = jwt token with format (JWT <user_token>)
+            Fields: -
+
+            Response:
+                Success:
+                    Status Code: 200 (OK)
+                    Response Data:
+                        - id = user id
+                        - username = user username
+                        - email = user email
+                        - first_name = user first name
+                        - last_name = user last name
+                        - account = user account data
+                    Example:
+                        {
+                            "id": 7,
+                            "username": "ricky@gmail.com",
+                            "email": "ricky@gmail.com",
+                            "first_name": "Ricky",
+                            "last_name": "Putra",
+                            "account": null
+                        }
+
+                Error:
+                    Status Code: 401 (Unauthorized)
+                    Response Data:
+                        Example:
+                            {
+                                "detail": "Authentication credentials were not provided."
+                            }
+
+    """
+
+    def post(self, request, format=None):
+        user_data = UserSerializer(instance=User.objects.get(
+            id=jwt.decode(request.META['HTTP_AUTHORIZATION'].split(" ")[1], SECRET_KEY, algorithms=['HS256'])[
+                "user_id"]))
+        return Response(user_data.data)
