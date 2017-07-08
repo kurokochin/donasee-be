@@ -146,7 +146,7 @@ class LoginView(APIView):
             try:
                 user = User.objects.get(email=ser.validated_data)
             except User.DoesNotExist:
-                return Response({"detail": 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"detail": 'User not found'}, status=status.HTTP_401_UNAUTHORIZED)
             user_ser = UserSerializer(instance=user)
             data = {
                 "user": user_ser.data,
