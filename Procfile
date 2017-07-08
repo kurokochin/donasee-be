@@ -1,0 +1,1 @@
+web: gunicorn donasee.wsgi --log-file -
