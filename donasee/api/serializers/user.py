@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
+from donasee.api.serializers.campaign import CampaignSerializer
 from donasee.apps.accounts.models import UserProfile
 
 
@@ -129,7 +130,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     userprofile = UserProfileSerializer()
+    campaigns = CampaignSerializer(many=True)
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'userprofile')
+        fields = ('id', 'username', 'email', 'userprofile', 'campaigns')

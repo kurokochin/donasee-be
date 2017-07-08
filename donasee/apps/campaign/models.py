@@ -6,7 +6,7 @@ from django.db import models
 
 # Create your models here.
 class Campaign(models.Model):
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, related_name="campaigns")
     title = models.CharField(max_length=256)
     money_needed = models.IntegerField()
     description = models.TextField()
