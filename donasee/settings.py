@@ -31,7 +31,7 @@ SECRET_KEY = 'nwnwcvplht=$il*2mn0qwt4g4z%%1g=x42tc)6y$)-@y0n2n_$'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '10.99.3.59']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'donasee-be.herokuapp.com']
 
 
 def is_run_in_test_env():
