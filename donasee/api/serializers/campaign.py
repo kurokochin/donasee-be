@@ -5,6 +5,12 @@ from donasee.apps.accounts.models import UserProfile
 from donasee.apps.campaign.models import Campaign, Donation
 
 
+class DonationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Donation
+        fields = '__all__'
+
+
 class CampaignSerializer(serializers.ModelSerializer):
     donations = DonationSerializer(many=True)
 
@@ -24,9 +30,3 @@ class CampaignSerializer(serializers.ModelSerializer):
             return serializers.ValidationError('User Profile doesn\' exist')
 
         return super(CampaignSerializer, self).run_validation(data=attrs)
-
-
-class DonationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Donation
-        fields = '__all__'
