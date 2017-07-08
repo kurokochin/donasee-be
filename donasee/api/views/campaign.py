@@ -41,5 +41,6 @@ class DonationList(APIView):
     def post(self, request, form=None):
         ser = DonationSerializer(data=request.data)
         if ser.is_valid():
+            ser.save()
             return Response(ser.data)
         return Response({'detail': ser.errors}, status=status.HTTP_400_BAD_REQUEST)
