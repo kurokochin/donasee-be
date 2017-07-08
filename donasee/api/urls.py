@@ -10,5 +10,5 @@ urlpatterns = [
     url(r'^$', root.api_root, name='api-root'),
     url(r'^register/$', user.RegisterView.as_view(), name='register'),
     url(r'^login/$', user.LoginView.as_view(), name='login'),
-    url(r'^campaign/$', campaign.CampaignListView, name='campaign-list'),
+    url(r'^campaign/$', campaign.CampaignListView.as_view(), name='campaign-list'),
 ]

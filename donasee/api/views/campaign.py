@@ -7,7 +7,7 @@ from donasee.apps.campaign.models import Campaign
 
 
 class CampaignListView(APIView):
-    def get(self):
+    def get(self, request, format=None):
         return Response(CampaignSerializer(Campaign.objects.all(), many=True).data)
 
     def post(self, request, format=None):
@@ -15,4 +15,5 @@ class CampaignListView(APIView):
         if ser.is_valid():
             ser.save()
             return Response(ser.data)
-        return Response({'detail': 'Some fields are not valid'}, status=status.HTTP_400_BAD_REQUEST)
+        print(ser.errors)
+        return Response({'detail': ser.errors['non_field_errors'][0]}, status=status.HTTP_400_BAD_REQUEST)

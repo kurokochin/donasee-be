@@ -12,7 +12,7 @@ class DonationSerializer(serializers.ModelSerializer):
 
 
 class CampaignSerializer(serializers.ModelSerializer):
-    donations = DonationSerializer(many=True)
+    donations = DonationSerializer(many=True, required=False)
 
     class Meta:
         model = Campaign
@@ -20,7 +20,7 @@ class CampaignSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         try:
-            user = User.objects.get(id=attrs['user'])
+            user = User.objects.get(id=attrs['user'].id)
             user_profile = UserProfile.objects.get(user=user)
             if user_profile.status == 'pending':
                 return serializers.ValidationError('User Profile hasn\'t been verified')
@@ -29,4 +29,28 @@ class CampaignSerializer(serializers.ModelSerializer):
         except UserProfile.DoesNotExist:
             return serializers.ValidationError('User Profile doesn\' exist')
 
-        return super(CampaignSerializer, self).run_validation(data=attrs)
+        try:
+            if not attrs['title']:
+                return serializers.ValidationError('Invalid title provided')
+        except:
+            return serializers.ValidationError('Invalid title provided')
+
+        try:
+            if not attrs['image']:
+                return serializers.ValidationError('Invalid image link provided')
+        except:
+            return serializers.ValidationError('Invalid image link provided')
+
+        try:
+            if not attrs['money_needed']:
+                return serializers.ValidationError('Invalid money needed provided')
+        except:
+            return serializers.ValidationError('Invalid money needed provided')
+
+        try:
+            if not attrs['description']:
+                return serializers.ValidationError('Invalid description provided')
+        except:
+            return serializers.ValidationError('Invalid description provided')
+
+        return attrs
